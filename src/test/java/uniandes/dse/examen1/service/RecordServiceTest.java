@@ -68,7 +68,12 @@ public class RecordServiceTest {
      */
     @Test
     void testCreateRecord() {
-        // TODO
+    try{
+       recordService.createRecord(login, courseCode, 5.0, courseCode);
+        }
+        catch (InvalidRecordException e){
+            fail("No debio haber fallado");
+        }
     }
 
     /**

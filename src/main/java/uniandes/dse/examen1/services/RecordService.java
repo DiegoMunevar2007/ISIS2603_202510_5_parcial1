@@ -30,6 +30,29 @@ public class RecordService {
 
     public RecordEntity createRecord(String loginStudent, String courseCode, Double grade, String semester)
             throws InvalidRecordException {
-        // TODO
+        Optional<StudentEntity> estudianteEncontrado = studentRepository.findByLogin(loginStudent);
+        Optional<CourseEntity> cursoEncontrado = courseRepository.findByCourseCode(courseCode);
+        if (estudianteEncontrado.isEmpty()){
+            throw new InvalidRecordException("No existe un estudiante con el login "+loginStudent);
+        }
+        if (cursoEncontrado.isEmpty()){
+            throw new InvalidRecordException("No existe un curso con el codigo "+courseCode);
+        }
+        if (grade<1.5 || grade>5){
+            throw new InvalidRecordException("La nota para este curso no es valida");
+        }
+        for (RecordEntity entidad : estudianteEncontrado.get().getRecords()){
+            if (entidad.getCourse().equals(cursoEncontrado.get()) && entidad.getFinalGrade()>=3){
+                throw new InvalidRecordException("No se puede generar un nuevo registro para este estudiante.");
+            }
+        }
+        RecordEntity recordCreado = new RecordEntity();
+        recordCreado.setCourse(cursoEncontrado.get());
+        recordCreado.setFinalGrade(grade);
+        recordCreado.setSemester(semester);
+        recordCreado.setStudent(estudianteEncontrado.get());
+
+        return recordRepository.save(recordCreado);
+
     }
 }

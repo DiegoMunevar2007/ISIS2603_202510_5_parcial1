@@ -1,6 +1,9 @@
 package uniandes.dse.examen1.service;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +17,7 @@ import jakarta.transaction.Transactional;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 import uniandes.dse.examen1.entities.CourseEntity;
+import uniandes.dse.examen1.entities.StudentEntity;
 import uniandes.dse.examen1.exceptions.RepeatedCourseException;
 import uniandes.dse.examen1.services.CourseService;
 
@@ -36,12 +40,25 @@ public class CourseServiceTest {
     }
 
     @Test
-    void testCreateRecordMissingCourse() {
-        // TODO
+    void testCreateCourse() {
+        CourseEntity curso = factory.manufacturePojo(CourseEntity.class);
+        entityManager.persist(curso);
+        assertDoesNotThrow(() -> {courseService.createCourse(curso);});
+        assertNotNull(curso);
+        assertEquals(entityManager.find(StudentEntity.class,curso), curso);
     }
 
     @Test
     void testCreateRepeatedCourse() {
-        // TODO
+        CourseEntity curso = factory.manufacturePojo(CourseEntity.class);
+        entityManager.persist(curso);
+        assertDoesNotThrow(() -> {courseService.createCourse(curso);});
+        assertNotNull(curso);
+        CourseEntity cursoRepetido = factory.manufacturePojo(CourseEntity.class);
+        cursoRepetido.setCourseCode(curso.getCourseCode());
+        entityManager.persist(cursoRepetido);
+        assertThrows(RepeatedCourseException.class, ()->{
+            courseService.createCourse(cursoRepetido);
+        });
     }
 }
