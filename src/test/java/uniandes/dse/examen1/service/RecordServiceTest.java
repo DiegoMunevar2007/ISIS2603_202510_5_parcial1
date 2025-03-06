@@ -82,7 +82,13 @@ public class RecordServiceTest {
     @Test
     void testCreateRecordMissingStudent() {
         // TODO
-    }
+        try{
+            recordService.createRecord(login, courseCode, 5.0, courseCode);
+             }
+             catch (InvalidRecordException e){
+                 fail("No debio haber fallado");
+             }
+         }
 
     /**
      * Tests the creation of a record when the course code is wrong
@@ -90,7 +96,12 @@ public class RecordServiceTest {
     @Test
     void testCreateInscripcionMissingCourse() {
         // TODO
-    }
+        try{
+            recordService.createRecord(null, courseCode, 5.0, courseCode);
+             }
+             catch (InvalidRecordException e){
+             }
+         }
 
     /**
      * Tests the creation of a record when the grade is not valid
@@ -98,6 +109,11 @@ public class RecordServiceTest {
     @Test
     void testCreateInscripcionWrongGrade() {
         // TODO
+        try{
+            recordService.createRecord(login, courseCode, 0.0, courseCode);
+             }
+             catch (InvalidRecordException e){
+             }
     }
 
     /**
