@@ -31,7 +31,10 @@ public class StatsService {
         for (RecordEntity record : records ){
             average+=record.getFinalGrade();
         }
-        return average/records.size();
+        if (!records.isEmpty()){
+            average=average/records.size();
+        }
+        return average;
     }
 
     public Double calculateCourseAverage(String courseCode) {
@@ -45,8 +48,11 @@ public class StatsService {
                     cantidadContada++;
                 }
             }
-        } 
-        return promedio/cantidadContada;
+        }
+        if (cantidadContada>0){
+            promedio=promedio/cantidadContada;
+        }
+        return promedio;
     }
 
 }

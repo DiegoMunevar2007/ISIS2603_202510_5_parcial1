@@ -1,6 +1,5 @@
 package uniandes.dse.examen1.services;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,7 @@ public class RecordService {
             throws InvalidRecordException {
         Optional<StudentEntity> estudianteEncontrado = studentRepository.findByLogin(loginStudent);
         Optional<CourseEntity> cursoEncontrado = courseRepository.findByCourseCode(courseCode);
+        //Verificar que el estudiante y el curso existan
         if (estudianteEncontrado.isEmpty()){
             throw new InvalidRecordException("No existe un estudiante con el login "+loginStudent);
         }
@@ -41,18 +41,34 @@ public class RecordService {
         if (grade<1.5 || grade>5){
             throw new InvalidRecordException("La nota para este curso no es valida");
         }
-        for (RecordEntity entidad : estudianteEncontrado.get().getRecords()){
-            if (entidad.getCourse().equals(cursoEncontrado.get()) && entidad.getFinalGrade()>=3){
-                throw new InvalidRecordException("No se puede generar un nuevo registro para este estudiante.");
-            }
-        }
+
+        //Crear el registro
         RecordEntity recordCreado = new RecordEntity();
         recordCreado.setCourse(cursoEncontrado.get());
         recordCreado.setFinalGrade(grade);
         recordCreado.setSemester(semester);
         recordCreado.setStudent(estudianteEncontrado.get());
 
-        return recordRepository.save(recordCreado);
+        //Verificar que el estudiante no haya tomado el curso
+        boolean cursoYaTomado=false;
+        for (RecordEntity entidad : estudianteEncontrado.get().getRecords()){
+            if (entidad.getCourse().equals(cursoEncontrado.get()) && entidad.getFinalGrade()>=3){
+                throw new InvalidRecordException("No se puede generar un nuevo registro para este estudiante.");
+            }
+            else if (entidad.getCourse().equals(cursoEncontrado.get()) && entidad.getFinalGrade()<3){
+                cursoYaTomado=true;
+            }
+        }
+        //Si el curso ya fue tomado, se agrega el registro al estudiante
+        //Si no, se agrega el registro al estudiante y el estudiante al curso
+        if (cursoYaTomado){
+            estudianteEncontrado.get().getRecords().add(recordCreado);
+            return recordRepository.save(recordCreado);
+        }
+        cursoEncontrado.get().getStudents().add(estudianteEncontrado.get());
+        estudianteEncontrado.get().getRecords().add(recordCreado);
+        return recordRepository.save(recordCreado);    
+       
 
     }
 }

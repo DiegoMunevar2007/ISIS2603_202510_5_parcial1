@@ -5,7 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 import uk.co.jemos.podam.common.PodamExclude;
 
@@ -31,7 +30,7 @@ public class RecordEntity {
 
     @ManyToOne
     private StudentEntity student;
-
+    
     @ManyToOne
     private CourseEntity course;
 

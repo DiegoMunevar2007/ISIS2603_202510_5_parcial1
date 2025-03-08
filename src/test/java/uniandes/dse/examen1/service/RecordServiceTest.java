@@ -1,10 +1,9 @@
 package uniandes.dse.examen1.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 import uniandes.dse.examen1.entities.CourseEntity;
 import uniandes.dse.examen1.entities.StudentEntity;
-import uniandes.dse.examen1.entities.RecordEntity;
 import uniandes.dse.examen1.exceptions.RepeatedCourseException;
 import uniandes.dse.examen1.exceptions.RepeatedStudentException;
 import uniandes.dse.examen1.exceptions.InvalidRecordException;
@@ -68,12 +66,10 @@ public class RecordServiceTest {
      */
     @Test
     void testCreateRecord() {
-    try{
-       recordService.createRecord(login, courseCode, 5.0, courseCode);
-        }
-        catch (InvalidRecordException e){
-            fail("No debio haber fallado");
-        }
+        assertDoesNotThrow(()->{
+            recordService.createRecord(login, courseCode, 5.0, courseCode);
+        });
+        assertNotEquals(0, studentRepository.findByLogin(login).get().getRecords().size());
     }
 
     /**
@@ -81,12 +77,12 @@ public class RecordServiceTest {
      */
     @Test
     void testCreateRecordMissingStudent() {
-        // TODO
         try{
-            recordService.createRecord(login, courseCode, 5.0, courseCode);
+            recordService.createRecord("", courseCode, 5.0, courseCode);
+            fail("Debio haber lanzado una excepción");
              }
              catch (InvalidRecordException e){
-                 fail("No debio haber fallado");
+
              }
          }
 
@@ -95,11 +91,12 @@ public class RecordServiceTest {
      */
     @Test
     void testCreateInscripcionMissingCourse() {
-        // TODO
         try{
-            recordService.createRecord(null, courseCode, 5.0, courseCode);
+            recordService.createRecord(login, null, 5.0, courseCode);
+            fail("Debio haber lanzado una excepción");
              }
              catch (InvalidRecordException e){
+
              }
          }
 
@@ -111,9 +108,17 @@ public class RecordServiceTest {
         // TODO
         try{
             recordService.createRecord(login, courseCode, 0.0, courseCode);
-             }
-             catch (InvalidRecordException e){
-             }
+            fail("Debio haber lanzado una excepción");
+            }
+        catch (InvalidRecordException e){
+        }
+
+        try{
+            recordService.createRecord(login, courseCode, 5.1, courseCode);
+            fail("Debio haber lanzado una excepción");
+            }
+        catch (InvalidRecordException e){
+        }
     }
 
     /**
@@ -122,7 +127,13 @@ public class RecordServiceTest {
      */
     @Test
     void testCreateInscripcionRepetida1() {
-        // TODO
+        try{
+            recordService.createRecord(login, courseCode, 5.0, courseCode);
+            recordService.createRecord(login, courseCode, 4.0, courseCode);
+            fail("Debio haber lanzado una excepción");
+             }
+             catch (InvalidRecordException e){
+             }
     }
 
     /**
@@ -131,6 +142,12 @@ public class RecordServiceTest {
      */
     @Test
     void testCreateInscripcionRepetida2() {
-        // TODO
+        try{
+            recordService.createRecord(login, courseCode, 2.0, courseCode);
+            recordService.createRecord(login, courseCode, 4.0, courseCode);
+             }
+             catch (InvalidRecordException e){
+                fail("No debio haber lanzado una excepción");
+             }
     }
 }
