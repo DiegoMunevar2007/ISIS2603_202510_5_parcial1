@@ -52,10 +52,10 @@ public class RecordService {
         //Verificar que el estudiante no haya tomado el curso
         boolean cursoYaTomado=false;
         for (RecordEntity entidad : estudianteEncontrado.get().getRecords()){
-            if (entidad.getCourse().equals(cursoEncontrado.get()) && entidad.getFinalGrade()>=3){
+            if (entidad.getCourse().equals(cursoEncontrado.get()) && entidad.getFinalGrade()>=3.0){
                 throw new InvalidRecordException("No se puede generar un nuevo registro para este estudiante.");
             }
-            else if (entidad.getCourse().equals(cursoEncontrado.get()) && entidad.getFinalGrade()<3){
+            else if (entidad.getCourse().equals(cursoEncontrado.get())){
                 cursoYaTomado=true;
             }
         }

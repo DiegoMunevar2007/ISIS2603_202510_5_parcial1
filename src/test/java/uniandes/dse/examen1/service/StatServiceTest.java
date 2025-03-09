@@ -78,8 +78,14 @@ public class StatServiceTest {
         recordService.createRecord(loginEstudiante,cursoNuevo.getCourseCode(),5.0,"3");
         assertEquals(4.5, statService.calculateStudentAverage(loginEstudiante));
     }
+
     @Test
-    void testCalculateCourseAverage() throws InvalidRecordException, RepeatedCourseException{
+    void testCalculateStudentAverageSinRegistros() {
+        assertEquals(0.0,statService.calculateStudentAverage(loginEstudiante));
+    }
+
+    @Test
+    void testCalculateCourseAverage() throws InvalidRecordException{
         RecordEntity recordCreado =recordService.createRecord(loginEstudiante, codCurso, 4.0,"2");
         entityManager.persist(recordCreado);
         assertEquals(4.0,statService.calculateCourseAverage(codCurso));
@@ -88,5 +94,21 @@ public class StatServiceTest {
         entityManager.persist(estudiante);
         recordService.createRecord(estudiante.getLogin(),codCurso,5.0,"3");
         assertEquals(4.5, statService.calculateCourseAverage(codCurso));
+
+    }
+
+    @Test
+    void testCalculateCourseAverageSinRegistros() {
+        assertEquals(0.0,statService.calculateCourseAverage(codCurso));
+    }
+
+    @Test
+    void testCalculateCourseAverageCursosDiferentes() throws InvalidRecordException, RepeatedCourseException{
+        RecordEntity recordCreado =recordService.createRecord(loginEstudiante, codCurso, 4.0,"2");
+        entityManager.persist(recordCreado);
+        CourseEntity cursoNuevo = courseService.createCourse(factory.manufacturePojo(CourseEntity.class));
+        entityManager.persist(cursoNuevo);
+        recordService.createRecord(loginEstudiante,cursoNuevo.getCourseCode(),5.0,"3");
+        assertEquals(4.0,statService.calculateCourseAverage(codCurso));
     }
 }
