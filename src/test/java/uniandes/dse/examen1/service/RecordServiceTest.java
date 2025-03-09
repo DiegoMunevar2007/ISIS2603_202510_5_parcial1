@@ -28,7 +28,7 @@ import uniandes.dse.examen1.services.RecordService;
 @DataJpaTest
 @Transactional
 @Import({ RecordService.class, CourseService.class, StudentService.class })
-public class RecordServiceTest {
+class RecordServiceTest {
 
     @Autowired
     private RecordService recordService;
@@ -105,7 +105,6 @@ public class RecordServiceTest {
      */
     @Test
     void testCreateInscripcionWrongGrade() {
-        // TODO
         try{
             recordService.createRecord(login, courseCode, 0.0, courseCode);
             fail("Debio haber lanzado una excepción");
@@ -131,9 +130,10 @@ public class RecordServiceTest {
             recordService.createRecord(login, courseCode, 5.0, courseCode);
             recordService.createRecord(login, courseCode, 4.0, courseCode);
             fail("Debio haber lanzado una excepción");
-             }
-             catch (InvalidRecordException e){
-             }
+        }
+        catch (InvalidRecordException e){
+        
+        }
     }
 
     /**
@@ -145,7 +145,7 @@ public class RecordServiceTest {
         try{
             recordService.createRecord(login, courseCode, 2.0, courseCode);
             recordService.createRecord(login, courseCode, 4.0, courseCode);
-             }
+            }
              catch (InvalidRecordException e){
                 fail("No debio haber lanzado una excepción");
              }
